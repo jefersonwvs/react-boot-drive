@@ -1,0 +1,4 @@
+# Environment variables configured on "Run/debug Configurations"
+
+awsAccessKey: ${AWS_ACCESS_KEY}
+awsSecretAccessKey: ${AWS_SECRET_ACCESS_KEY}
