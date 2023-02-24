@@ -1,4 +1,8 @@
-# Environment variables configured on "Run/debug Configurations"
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
 
+# Environment variables configured on "Run/debug Configurations"
 awsAccessKey: ${AWS_ACCESS_KEY}
 awsSecretAccessKey: ${AWS_SECRET_ACCESS_KEY}
