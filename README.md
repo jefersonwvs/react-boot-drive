@@ -3,7 +3,7 @@
 This project is a web application to store images on cloud.
 
 ## Video demonstration
-[video](video.gif)
+![video](video.gif)
 
 ## Software stack
 To develop this app, it was used the following stack:
