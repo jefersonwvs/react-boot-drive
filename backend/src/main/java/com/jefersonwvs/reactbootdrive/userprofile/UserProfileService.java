@@ -41,6 +41,17 @@ public class UserProfileService {
 		storeImage(file, user, metadata);
 	}
 
+	public byte[] downloadUserProfileImage(UUID userProfileId) {
+		UserProfile user = getUserProfileOrThrow(userProfileId);
+		String path = String.format("%s/%s",
+				BucketName.PROFILE_IMAGE.getBucketName(),
+				user.getUserProfileId());
+
+		return user.getUserProfileImageLink()
+				.map(imageLink -> fileStore.download(path, imageLink))
+				.orElse(new byte[0]);
+	}
+
 	private static void isFileEmpty(MultipartFile file) {
 		if (file.isEmpty()) {
 			throw new IllegalStateException("Cannot upload empty file");
