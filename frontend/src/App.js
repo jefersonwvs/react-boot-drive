@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
 
+import './App.css';
+
 function UserProfiles() {
 	const [userProfiles, setUserProfiles] = useState([]);
 
@@ -18,6 +20,12 @@ function UserProfiles() {
 
 	return userProfiles.map((userProfile, index) => (
 		<div key={index}>
+			{userProfile.userProfileId ? (
+				<img
+					src={`http://localhost:8080/api/v1/user-profile/${userProfile.userProfileId}/image/download`}
+					alt=""
+				/>
+			) : null}
 			<br />
 			<br />
 			<h1>{userProfile.username}</h1>
