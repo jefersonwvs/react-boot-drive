@@ -2,6 +2,9 @@ spring:
   servlet:
     multipart:
       max-file-size: 50MB
+  profiles:
+    active:
+      - test
 
 # Environment variables configured on "Run/debug Configurations"
 awsRegion: ${AWS_REGION}
