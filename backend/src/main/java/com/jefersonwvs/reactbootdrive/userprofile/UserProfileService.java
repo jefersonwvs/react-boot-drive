@@ -1,6 +1,5 @@
 package com.jefersonwvs.reactbootdrive.userprofile;
 
-import com.jefersonwvs.reactbootdrive.bucket.BucketName;
 import com.jefersonwvs.reactbootdrive.filestore.FileStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,11 +15,13 @@ public class UserProfileService {
 
 	private final UserProfileRepository userProfileRepository;
 	private final FileStore fileStore;
+	private final String s3Bucket;
 
 	@Autowired
-	public UserProfileService(UserProfileRepository userProfileRepository, FileStore fileStore) {
+	public UserProfileService(UserProfileRepository userProfileRepository, FileStore fileStore, String s3Bucket) {
 		this.userProfileRepository = userProfileRepository;
 		this.fileStore = fileStore;
+		this.s3Bucket = s3Bucket;
 	}
 
 	List<UserProfile> getUserProfiles() {
@@ -44,9 +45,7 @@ public class UserProfileService {
 
 	public byte[] downloadUserProfileImage(UUID userProfileId) {
 		UserProfile user = getUserProfileOrThrow(userProfileId);
-		String path = String.format("%s/%s",
-				BucketName.PROFILE_IMAGE.getBucketName(),
-				user.getId());
+		String path = String.format("%s/%s", s3Bucket, user.getId());
 
 		return user.getImageLink()
 				.map(imageLink -> fileStore.download(path, imageLink))
@@ -84,7 +83,7 @@ public class UserProfileService {
 	}
 
 	private void storeImage(MultipartFile file, UserProfile user, Map<String, String> metadata) {
-		String path = String.format("%s/%s", BucketName.PROFILE_IMAGE.getBucketName(), user.getId());
+		String path = String.format("%s/%s", s3Bucket, user.getId());
 
 		String[] fields = file.getOriginalFilename().split("[.]");
 		// fields[0]: file name

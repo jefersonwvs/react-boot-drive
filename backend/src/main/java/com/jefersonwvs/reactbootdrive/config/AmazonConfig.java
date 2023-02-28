@@ -21,6 +21,9 @@ public class AmazonConfig {
 	@Value("${awsSecretAccessKey}")
 	private String secretAccessKey;
 
+	@Value("${awsS3Bucket}")
+	private String s3Bucket;
+
 	@Bean
 	public AmazonS3 s3() {
 
@@ -34,5 +37,10 @@ public class AmazonConfig {
 				.withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
 				.build();
 
+	}
+
+	@Bean
+	public String s3Bucket() {
+		return this.s3Bucket;
 	}
 }
