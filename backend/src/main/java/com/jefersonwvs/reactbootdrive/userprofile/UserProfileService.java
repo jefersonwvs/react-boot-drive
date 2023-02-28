@@ -2,7 +2,6 @@ package com.jefersonwvs.reactbootdrive.userprofile;
 
 import com.jefersonwvs.reactbootdrive.bucket.BucketName;
 import com.jefersonwvs.reactbootdrive.filestore.FileStore;
-import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

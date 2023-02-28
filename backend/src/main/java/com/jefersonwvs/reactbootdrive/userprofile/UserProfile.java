@@ -1,14 +1,24 @@
 package com.jefersonwvs.reactbootdrive.userprofile;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+@Entity
+@Table(name = "tbl_user_profiles")
 public class UserProfile {
 
+	@Id
 	private UUID userProfileId;
 	private String username;
 	private String userProfileImageLink;
+
+	public UserProfile() {
+	}
 
 	public UserProfile(UUID userProfileId, String username, String userProfileImageLink) {
 		this.userProfileId = userProfileId;
