@@ -38,15 +38,17 @@ public class UserProfileService {
 		Map<String, String> metadata = extractMetadata(file);
 		// 5. Store the image in s3 and update database (userProfileImageLing) with s3 image link
 		storeImage(file, user, metadata);
+
+		userProfileRepository.save(user);
 	}
 
 	public byte[] downloadUserProfileImage(UUID userProfileId) {
 		UserProfile user = getUserProfileOrThrow(userProfileId);
 		String path = String.format("%s/%s",
 				BucketName.PROFILE_IMAGE.getBucketName(),
-				user.getUserProfileId());
+				user.getId());
 
-		return user.getUserProfileImageLink()
+		return user.getImageLink()
 				.map(imageLink -> fileStore.download(path, imageLink))
 				.orElse(new byte[0]);
 	}
@@ -67,7 +69,7 @@ public class UserProfileService {
 		return userProfileRepository
 				.getUserProfiles()
 				.stream()
-				.filter(obj -> obj.getUserProfileId().equals(userProfileId))
+				.filter(obj -> obj.getId().equals(userProfileId))
 				.findFirst()
 				.orElseThrow(
 						() -> new IllegalStateException(String.format("User profile (ID %s) not found", userProfileId))
@@ -82,7 +84,7 @@ public class UserProfileService {
 	}
 
 	private void storeImage(MultipartFile file, UserProfile user, Map<String, String> metadata) {
-		String path = String.format("%s/%s", BucketName.PROFILE_IMAGE.getBucketName(), user.getUserProfileId());
+		String path = String.format("%s/%s", BucketName.PROFILE_IMAGE.getBucketName(), user.getId());
 
 		String[] fields = file.getOriginalFilename().split("[.]");
 		// fields[0]: file name
@@ -92,7 +94,7 @@ public class UserProfileService {
 
 		try {
 			fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
-			user.setUserProfileImageLink(filename);
+			user.setImageLink(filename);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}

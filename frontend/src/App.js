@@ -20,17 +20,17 @@ function UserProfiles() {
 
 	return userProfiles.map((userProfile, index) => (
 		<div key={index}>
-			{userProfile.userProfileId ? (
+			{userProfile.id ? (
 				<img
-					src={`http://localhost:8080/api/v1/user-profile/${userProfile.userProfileId}/image/download`}
+					src={`http://localhost:8080/api/v1/user-profile/${userProfile.id}/image/download`}
 					alt=""
 				/>
 			) : null}
 			<br />
 			<br />
 			<h1>{userProfile.username}</h1>
-			<p>{userProfile.userProfileId}</p>
-			<Dropzone {...userProfile} />
+			<p>{userProfile.id}</p>
+			<Dropzone userProfileId={userProfile.id} />
 			<br />
 		</div>
 	));

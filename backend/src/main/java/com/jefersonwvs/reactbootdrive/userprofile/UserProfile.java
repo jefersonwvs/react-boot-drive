@@ -13,25 +13,25 @@ import java.util.UUID;
 public class UserProfile {
 
 	@Id
-	private UUID userProfileId;
+	private UUID id;
 	private String username;
-	private String userProfileImageLink;
+	private String imageLink;
 
 	public UserProfile() {
 	}
 
-	public UserProfile(UUID userProfileId, String username, String userProfileImageLink) {
-		this.userProfileId = userProfileId;
+	public UserProfile(UUID id, String username, String imageLink) {
+		this.id = id;
 		this.username = username;
-		this.userProfileImageLink = userProfileImageLink;
+		this.imageLink = imageLink;
 	}
 
-	public UUID getUserProfileId() {
-		return userProfileId;
+	public UUID getId() {
+		return id;
 	}
 
-	public void setUserProfileId(UUID userProfileId) {
-		this.userProfileId = userProfileId;
+	public void setId(UUID id) {
+		this.id = id;
 	}
 
 	public String getUsername() {
@@ -42,12 +42,12 @@ public class UserProfile {
 		this.username = username;
 	}
 
-	public Optional<String> getUserProfileImageLink() {
-		return Optional.ofNullable(userProfileImageLink);
+	public Optional<String> getImageLink() {
+		return Optional.ofNullable(imageLink);
 	}
 
-	public void setUserProfileImageLink(String userProfileImageLink) {
-		this.userProfileImageLink = userProfileImageLink;
+	public void setImageLink(String imageLink) {
+		this.imageLink = imageLink;
 	}
 
 	@Override
@@ -55,13 +55,13 @@ public class UserProfile {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		UserProfile that = (UserProfile) o;
-		return Objects.equals(userProfileId, that.userProfileId)
+		return Objects.equals(id, that.id)
 				&& Objects.equals(username, that.username)
-				&& Objects.equals(userProfileImageLink, that.userProfileImageLink);
+				&& Objects.equals(imageLink, that.imageLink);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(userProfileId, username, userProfileImageLink);
+		return Objects.hash(id, username, imageLink);
 	}
 }
