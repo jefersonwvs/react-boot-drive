@@ -25,9 +25,9 @@ public class FileStore {
 	}
 
 	public void save(String path,
-			String fileName,
-			Optional<Map<String, String>> optionalMetadata,
-			InputStream inputStream) {
+									 String fileName,
+									 Optional<Map<String, String>> optionalMetadata,
+									 InputStream inputStream) {
 		ObjectMetadata metadata = new ObjectMetadata();
 		optionalMetadata.ifPresent(map -> {
 			if (!map.isEmpty()) {

@@ -24,8 +24,55 @@ public class UserProfileService {
 		this.s3Bucket = s3Bucket;
 	}
 
+	private static void isFileEmpty(MultipartFile file) {
+		if (file.isEmpty()) {
+			throw new IllegalStateException("Cannot upload empty file");
+		}
+	}
+
+	private static void isImage(MultipartFile file) {
+		if (!Arrays.asList(IMAGE_JPEG.getMimeType(), IMAGE_PNG.getMimeType(), IMAGE_GIF.getMimeType()).contains(file.getContentType())) {
+			throw new IllegalStateException("File must be a image");
+		}
+	}
+
+	private static Map<String, String> extractMetadata(MultipartFile file) {
+		Map<String, String> metadata = new HashMap<>();
+		metadata.put("Content-Type", file.getContentType());
+		metadata.put("Content-Length", file.getSize() + "");
+		return metadata;
+	}
+
 	List<UserProfile> getUserProfiles() {
 		return userProfileRepository.getUserProfiles();
+	}
+
+	private UserProfile getUserProfileOrThrow(UUID userProfileId) {
+		return userProfileRepository
+				.getUserProfiles()
+				.stream()
+				.filter(obj -> obj.getId().equals(userProfileId))
+				.findFirst()
+				.orElseThrow(
+						() -> new IllegalStateException(String.format("User profile (ID %s) not found", userProfileId))
+				);
+	}
+
+	private void storeImage(MultipartFile file, UserProfile user, Map<String, String> metadata) {
+		String path = String.format("%s/%s", s3Bucket, user.getId());
+
+		String[] fields = file.getOriginalFilename().split("[.]");
+		// fields[0]: file name
+		// fields[1]: file extension
+
+		String filename = String.format("%s-%s.%s", fields[0], UUID.randomUUID(), fields[1]);
+
+		try {
+			fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
+			user.setImageLink(filename);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	public void uploadUserProfileImage(UUID userProfileId, MultipartFile file) {
@@ -50,52 +97,5 @@ public class UserProfileService {
 		return user.getImageLink()
 				.map(imageLink -> fileStore.download(path, imageLink))
 				.orElse(new byte[0]);
-	}
-
-	private static void isFileEmpty(MultipartFile file) {
-		if (file.isEmpty()) {
-			throw new IllegalStateException("Cannot upload empty file");
-		}
-	}
-
-	private static void isImage(MultipartFile file) {
-		if (!Arrays.asList(IMAGE_JPEG.getMimeType(), IMAGE_PNG.getMimeType(), IMAGE_GIF.getMimeType()).contains(file.getContentType())) {
-			throw new IllegalStateException("File must be a image");
-		}
-	}
-
-	private UserProfile getUserProfileOrThrow(UUID userProfileId) {
-		return userProfileRepository
-				.getUserProfiles()
-				.stream()
-				.filter(obj -> obj.getId().equals(userProfileId))
-				.findFirst()
-				.orElseThrow(
-						() -> new IllegalStateException(String.format("User profile (ID %s) not found", userProfileId))
-				);
-	}
-
-	private static Map<String, String> extractMetadata(MultipartFile file) {
-		Map<String, String> metadata = new HashMap<>();
-		metadata.put("Content-Type", file.getContentType());
-		metadata.put("Content-Length", file.getSize() + "");
-		return metadata;
-	}
-
-	private void storeImage(MultipartFile file, UserProfile user, Map<String, String> metadata) {
-		String path = String.format("%s/%s", s3Bucket, user.getId());
-
-		String[] fields = file.getOriginalFilename().split("[.]");
-		// fields[0]: file name
-		// fields[1]: file extension
-
-		String filename = String.format("%s-%s.%s", fields[0], UUID.randomUUID(), fields[1]);
-
-		try {
-			fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
-			user.setImageLink(filename);
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
 	}
 }
